@@ -1,0 +1,828 @@
+html
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Forgekit — Professional browser tools for freelancers and small businesses. Download once, works forever. No subscriptions, no accounts.">
+<meta property="og:title" content="Forgekit — Tools that work">
+<meta property="og:description" content="Professional single-file web apps for freelancers and small businesses. No install, no cloud, no subscription.">
+<meta property="og:type" content="website">
+<title>Forgekit — Tools that work</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:     #0a0a0b;
+  --bg2:    #111114;
+  --bg3:    #18181d;
+  --bg4:    #202028;
+  --line:   rgba(255,255,255,0.07);
+  --line2:  rgba(255,255,255,0.13);
+  --text:   #e8e8f0;
+  --text2:  #9090a8;
+  --text3:  #50506a;
+  --accent: #e8ff47;
+  --accent2:#c8e000;
+  --red:    #ff4d4d;
+  --teal:   #2dd4bf;
+  --font-display: 'Syne', sans-serif;
+  --font-body:    'DM Sans', sans-serif;
+  --font-mono:    'DM Mono', monospace;
+}
+
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text);
+  overflow-x: hidden;
+  cursor: none;
+}
+
+/* ── CUSTOM CURSOR ── */
+.cursor {
+  position: fixed; top: 0; left: 0; z-index: 9999; pointer-events: none;
+  mix-blend-mode: difference;
+}
+.cursor-dot {
+  width: 8px; height: 8px; background: var(--accent); border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.2s, height 0.2s, opacity 0.2s;
+}
+.cursor-ring {
+  position: fixed; top: 0; left: 0; z-index: 9998; pointer-events: none;
+  width: 36px; height: 36px; border: 1px solid rgba(232,255,71,0.4);
+  border-radius: 50%; transform: translate(-50%, -50%);
+  transition: all 0.12s ease;
+}
+body:hover .cursor-dot { opacity: 1; }
+
+/* ── NOISE OVERLAY ── */
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 1; pointer-events: none;
+  opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-size: 200px;
+}
+
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  height: 60px; display: flex; align-items: center; justify-content: space-between;
+  padding: 0 40px;
+  border-bottom: 1px solid var(--line);
+  background: rgba(10,10,11,0.85);
+  backdrop-filter: blur(16px);
+}
+.nav-logo {
+  font-family: var(--font-display); font-size: 18px; font-weight: 800;
+  color: var(--text); letter-spacing: -0.5px; text-decoration: none;
+  display: flex; align-items: center; gap: 8px;
+}
+.nav-logo-mark {
+  width: 26px; height: 26px; background: var(--accent); border-radius: 5px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 800; color: #0a0a0b;
+}
+.nav-links { display: flex; align-items: center; gap: 28px; }
+.nav-links a { font-size: 13px; color: var(--text2); text-decoration: none; font-family: var(--font-mono); transition: color 0.15s; }
+.nav-links a:hover { color: var(--text); }
+.nav-cta {
+  background: var(--accent); color: #0a0a0b; padding: 7px 18px;
+  border-radius: 4px; font-size: 13px; font-weight: 600;
+  text-decoration: none; font-family: var(--font-display);
+  transition: all 0.15s; letter-spacing: 0.2px;
+}
+.nav-cta:hover { background: var(--accent2); transform: translateY(-1px); }
+
+/* ── HERO ── */
+.hero {
+  min-height: 100vh; display: flex; flex-direction: column;
+  justify-content: center; padding: 120px 40px 80px;
+  position: relative; overflow: hidden;
+  border-bottom: 1px solid var(--line);
+}
+
+.hero-grid {
+  position: absolute; inset: 0; z-index: 0;
+  background-image:
+    linear-gradient(var(--line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line) 1px, transparent 1px);
+  background-size: 60px 60px;
+  mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 100%);
+}
+
+.hero-accent-line {
+  position: absolute; left: 0; top: 50%; width: 100%; height: 1px;
+  background: linear-gradient(to right, transparent, var(--accent) 30%, var(--accent) 70%, transparent);
+  opacity: 0.08; transform: translateY(-50%);
+}
+
+.hero-inner { position: relative; z-index: 1; max-width: 1100px; margin: 0 auto; width: 100%; }
+
+.hero-eyebrow {
+  font-family: var(--font-mono); font-size: 12px; color: var(--accent);
+  letter-spacing: 3px; text-transform: uppercase; margin-bottom: 28px;
+  display: flex; align-items: center; gap: 12px;
+  opacity: 0; animation: fadeUp 0.6s 0.1s forwards;
+}
+.hero-eyebrow::before { content: ''; width: 32px; height: 1px; background: var(--accent); }
+
+.hero-title {
+  font-family: var(--font-display); font-size: clamp(52px, 8vw, 96px);
+  font-weight: 800; line-height: 0.95; letter-spacing: -3px;
+  color: var(--text); margin-bottom: 32px;
+  opacity: 0; animation: fadeUp 0.6s 0.2s forwards;
+}
+.hero-title .accent { color: var(--accent); }
+.hero-title .outline {
+  -webkit-text-stroke: 1px rgba(255,255,255,0.25);
+  color: transparent;
+}
+
+.hero-desc {
+  font-size: 18px; color: var(--text2); line-height: 1.65;
+  max-width: 520px; font-weight: 300; margin-bottom: 48px;
+  opacity: 0; animation: fadeUp 0.6s 0.35s forwards;
+}
+
+.hero-actions {
+  display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+  opacity: 0; animation: fadeUp 0.6s 0.45s forwards;
+}
+.btn-primary {
+  background: var(--accent); color: #0a0a0b; padding: 14px 28px;
+  border-radius: 4px; font-size: 14px; font-weight: 700;
+  text-decoration: none; font-family: var(--font-display);
+  transition: all 0.15s; display: inline-flex; align-items: center; gap: 8px;
+  letter-spacing: 0.2px;
+}
+.btn-primary:hover { background: var(--accent2); transform: translateY(-2px); box-shadow: 0 8px 30px rgba(232,255,71,0.2); }
+.btn-secondary {
+  color: var(--text2); padding: 14px 28px; font-size: 14px;
+  text-decoration: none; font-family: var(--font-mono);
+  border: 1px solid var(--line2); border-radius: 4px;
+  transition: all 0.15s; display: inline-flex; align-items: center; gap: 8px;
+}
+.btn-secondary:hover { color: var(--text); border-color: var(--text3); }
+
+.hero-stats {
+  position: absolute; right: 40px; bottom: 80px; z-index: 1;
+  display: flex; flex-direction: column; gap: 24px; text-align: right;
+  opacity: 0; animation: fadeUp 0.6s 0.55s forwards;
+}
+.hero-stat-num {
+  font-family: var(--font-display); font-size: 32px; font-weight: 800;
+  color: var(--text); letter-spacing: -1px; line-height: 1;
+}
+.hero-stat-label { font-family: var(--font-mono); font-size: 11px; color: var(--text3); letter-spacing: 1.5px; text-transform: uppercase; margin-top: 2px; }
+
+/* ── MARQUEE ── */
+.marquee-wrap {
+  border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+  padding: 14px 0; overflow: hidden; background: var(--bg2);
+  position: relative;
+}
+.marquee-track {
+  display: flex; gap: 0; white-space: nowrap;
+  animation: marquee 25s linear infinite;
+}
+.marquee-item {
+  font-family: var(--font-mono); font-size: 12px; color: var(--text3);
+  padding: 0 32px; letter-spacing: 2px; text-transform: uppercase;
+  display: flex; align-items: center; gap: 32px; flex-shrink: 0;
+}
+.marquee-dot { width: 4px; height: 4px; background: var(--accent); border-radius: 50%; flex-shrink: 0; }
+@keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+/* ── SECTION SHARED ── */
+section { padding: 100px 40px; max-width: 1200px; margin: 0 auto; }
+.section-label {
+  font-family: var(--font-mono); font-size: 11px; color: var(--accent);
+  letter-spacing: 3px; text-transform: uppercase; margin-bottom: 20px;
+  display: flex; align-items: center; gap: 10px;
+}
+.section-label::before { content: '//'; color: var(--text3); }
+.section-title {
+  font-family: var(--font-display); font-size: clamp(32px, 4vw, 52px);
+  font-weight: 800; letter-spacing: -1.5px; color: var(--text);
+  line-height: 1.05; margin-bottom: 16px;
+}
+.section-sub { font-size: 16px; color: var(--text2); font-weight: 300; line-height: 1.65; max-width: 480px; }
+
+/* ── PRODUCTS ── */
+.products-section { border-top: 1px solid var(--line); }
+.products-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 60px; flex-wrap: wrap; gap: 24px; }
+
+.products-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); }
+
+.product-card {
+  background: var(--bg); padding: 36px; display: flex; flex-direction: column;
+  gap: 16px; transition: background 0.2s; position: relative; overflow: hidden;
+  text-decoration: none; color: inherit;
+}
+.product-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: var(--accent); transform: scaleX(0); transform-origin: left;
+  transition: transform 0.3s ease;
+}
+.product-card:hover { background: var(--bg3); }
+.product-card:hover::before { transform: scaleX(1); }
+
+.product-card.featured { background: var(--bg2); }
+.product-card.featured::before { transform: scaleX(1); }
+
+.product-num {
+  font-family: var(--font-mono); font-size: 11px; color: var(--text3);
+  letter-spacing: 2px;
+}
+.product-icon {
+  font-size: 28px; width: 52px; height: 52px;
+  background: var(--bg4); border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.product-name {
+  font-family: var(--font-display); font-size: 22px; font-weight: 700;
+  color: var(--text); letter-spacing: -0.5px;
+}
+.product-desc { font-size: 14px; color: var(--text2); line-height: 1.6; font-weight: 300; flex: 1; }
+.product-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+.product-tag {
+  padding: 3px 10px; font-family: var(--font-mono); font-size: 10px;
+  color: var(--text3); border: 1px solid var(--line2); border-radius: 20px;
+  letter-spacing: 0.5px;
+}
+.product-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 8px; }
+.product-price {
+  font-family: var(--font-display); font-size: 20px; font-weight: 700;
+  color: var(--accent);
+}
+.product-cta {
+  font-family: var(--font-mono); font-size: 12px; color: var(--text3);
+  display: flex; align-items: center; gap: 6px; transition: color 0.15s;
+}
+.product-card:hover .product-cta { color: var(--accent); }
+.product-badge {
+  position: absolute; top: 20px; right: 20px;
+  background: var(--accent); color: #0a0a0b;
+  font-family: var(--font-mono); font-size: 9px; font-weight: 600;
+  padding: 3px 8px; border-radius: 2px; letter-spacing: 1px; text-transform: uppercase;
+}
+
+/* Coming soon card */
+.product-card.soon { opacity: 0.5; pointer-events: none; }
+.product-card.soon .product-price { color: var(--text3); font-size: 14px; }
+
+/* ── HOW IT WORKS ── */
+.how-section { border-top: 1px solid var(--line); }
+.steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0; background: var(--line); border: 1px solid var(--line); margin-top: 60px; }
+.step { background: var(--bg); padding: 36px 28px; position: relative; }
+.step-num {
+  font-family: var(--font-display); font-size: 64px; font-weight: 800;
+  color: var(--bg4); line-height: 1; margin-bottom: 20px;
+  letter-spacing: -3px;
+}
+.step-title { font-family: var(--font-display); font-size: 18px; font-weight: 700; color: var(--text); margin-bottom: 10px; letter-spacing: -0.3px; }
+.step-desc { font-size: 13px; color: var(--text2); line-height: 1.65; font-weight: 300; }
+.step::after {
+  content: '→'; position: absolute; right: -16px; top: 50%;
+  transform: translateY(-50%); z-index: 2;
+  font-size: 18px; color: var(--text3);
+  background: var(--bg); padding: 4px 0;
+}
+.step:last-child::after { display: none; }
+
+/* ── WHY ── */
+.why-section { border-top: 1px solid var(--line); }
+.why-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); margin-top: 60px; }
+.why-card { background: var(--bg); padding: 32px 28px; }
+.why-icon { font-size: 22px; margin-bottom: 16px; }
+.why-title { font-family: var(--font-display); font-size: 17px; font-weight: 700; color: var(--text); margin-bottom: 10px; letter-spacing: -0.3px; }
+.why-desc { font-size: 13px; color: var(--text2); line-height: 1.65; font-weight: 300; }
+.why-highlight { color: var(--accent); font-weight: 500; }
+
+/* ── BUNDLE ── */
+.bundle-section {
+  border-top: 1px solid var(--line);
+  background: var(--bg2); margin: 0; max-width: none; padding: 100px 40px;
+}
+.bundle-inner { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+.bundle-card {
+  background: var(--bg3); border: 1px solid var(--line2);
+  border-radius: 8px; padding: 40px;
+  position: relative; overflow: hidden;
+}
+.bundle-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(to right, var(--accent), var(--teal));
+}
+.bundle-tag {
+  font-family: var(--font-mono); font-size: 10px; color: var(--accent);
+  letter-spacing: 2px; text-transform: uppercase; margin-bottom: 16px;
+  display: block;
+}
+.bundle-name {
+  font-family: var(--font-display); font-size: 28px; font-weight: 800;
+  color: var(--text); letter-spacing: -0.8px; margin-bottom: 10px;
+}
+.bundle-desc { font-size: 14px; color: var(--text2); line-height: 1.65; margin-bottom: 24px; font-weight: 300; }
+.bundle-items { display: flex; flex-direction: column; gap: 10px; margin-bottom: 28px; }
+.bundle-item { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--text2); }
+.bundle-check { width: 18px; height: 18px; border-radius: 50%; background: rgba(232,255,71,0.12); border: 1px solid rgba(232,255,71,0.3); display: flex; align-items: center; justify-content: center; font-size: 9px; color: var(--accent); flex-shrink: 0; }
+.bundle-pricing { display: flex; align-items: baseline; gap: 10px; margin-bottom: 20px; }
+.bundle-price { font-family: var(--font-display); font-size: 42px; font-weight: 800; color: var(--accent); letter-spacing: -2px; }
+.bundle-was { font-size: 16px; color: var(--text3); text-decoration: line-through; }
+.bundle-save { font-family: var(--font-mono); font-size: 11px; color: var(--teal); background: rgba(45,212,191,0.1); padding: 2px 8px; border-radius: 3px; }
+
+/* ── TESTIMONIALS ── */
+.testi-section { border-top: 1px solid var(--line); }
+.testi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); margin-top: 60px; }
+.testi-card { background: var(--bg); padding: 32px 28px; display: flex; flex-direction: column; gap: 16px; }
+.testi-stars { color: var(--accent); font-size: 14px; letter-spacing: 2px; }
+.testi-text { font-size: 14px; color: var(--text2); line-height: 1.7; font-style: italic; font-weight: 300; flex: 1; }
+.testi-author { display: flex; align-items: center; gap: 10px; }
+.testi-avatar {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: var(--bg4); display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display); font-size: 13px; font-weight: 700; color: var(--accent);
+  flex-shrink: 0;
+}
+.testi-name { font-size: 13px; font-weight: 500; color: var(--text); }
+.testi-role { font-size: 11px; color: var(--text3); font-family: var(--font-mono); }
+
+/* ── FAQ ── */
+.faq-section { border-top: 1px solid var(--line); }
+.faq-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--line); border: 1px solid var(--line); margin-top: 60px; }
+.faq-item { background: var(--bg); padding: 28px; }
+.faq-q { font-family: var(--font-display); font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 10px; letter-spacing: -0.2px; }
+.faq-a { font-size: 13px; color: var(--text2); line-height: 1.7; font-weight: 300; }
+
+/* ── CTA SECTION ── */
+.cta-section {
+  border-top: 1px solid var(--line); text-align: center;
+  padding: 120px 40px; position: relative; overflow: hidden;
+}
+.cta-bg {
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 60% 60% at 50% 50%, rgba(232,255,71,0.04) 0%, transparent 70%);
+}
+.cta-inner { position: relative; z-index: 1; max-width: 640px; margin: 0 auto; }
+.cta-title {
+  font-family: var(--font-display); font-size: clamp(36px, 5vw, 64px);
+  font-weight: 800; letter-spacing: -2px; color: var(--text); margin-bottom: 20px; line-height: 1;
+}
+.cta-sub { font-size: 16px; color: var(--text2); margin-bottom: 40px; line-height: 1.65; font-weight: 300; }
+.cta-actions { display: flex; align-items: center; justify-content: center; gap: 16px; flex-wrap: wrap; }
+
+/* ── FOOTER ── */
+footer {
+  border-top: 1px solid var(--line); padding: 40px;
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 20px;
+  background: var(--bg2);
+}
+.footer-brand {
+  font-family: var(--font-display); font-size: 15px; font-weight: 800;
+  color: var(--text); display: flex; align-items: center; gap: 8px;
+}
+.footer-copy { font-family: var(--font-mono); font-size: 11px; color: var(--text3); letter-spacing: 0.5px; }
+.footer-links { display: flex; gap: 20px; }
+.footer-links a { font-size: 12px; color: var(--text3); text-decoration: none; font-family: var(--font-mono); transition: color 0.15s; }
+.footer-links a:hover { color: var(--accent); }
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.reveal {
+  opacity: 0; transform: translateY(24px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 900px) {
+  nav { padding: 0 20px; }
+  .nav-links { display: none; }
+  .hero { padding: 100px 20px 60px; }
+  .hero-stats { position: static; margin-top: 48px; text-align: left; flex-direction: row; flex-wrap: wrap; gap: 32px; }
+  section { padding: 70px 20px; }
+  .bundle-section { padding: 70px 20px; }
+  .bundle-inner { grid-template-columns: 1fr; gap: 40px; }
+  .why-grid { grid-template-columns: 1fr; }
+  .testi-grid { grid-template-columns: 1fr; }
+  .faq-grid { grid-template-columns: 1fr; }
+  footer { padding: 28px 20px; }
+  .steps { grid-template-columns: 1fr; }
+  .step::after { content: '↓'; right: auto; left: 28px; top: auto; bottom: -16px; transform: none; }
+}
+@media (max-width: 640px) {
+  .products-grid { grid-template-columns: 1fr; }
+  .hero-title { letter-spacing: -2px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Cursor -->
+<div class="cursor"><div class="cursor-dot" id="cursor-dot"></div></div>
+<div class="cursor-ring" id="cursor-ring"></div>
+
+<!-- ── NAV ── -->
+<nav>
+  <a class="nav-logo" href="#">
+    <div class="nav-logo-mark">F</div>
+    Forgekit
+  </a>
+  <div class="nav-links">
+    <a href="#tools">Tools</a>
+    <a href="#how">How it works</a>
+    <a href="#bundle">Bundle</a>
+    <a href="#faq">FAQ</a>
+  </div>
+  <a class="nav-cta" href="#tools">Browse tools →</a>
+</nav>
+
+<!-- ── HERO ── -->
+<div class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-accent-line"></div>
+  <div class="hero-inner">
+    <div class="hero-eyebrow">Professional tools, zero complexity</div>
+    <h1 class="hero-title">
+      Tools that<br>
+      <span class="accent">actually</span><br>
+      <span class="outline">work.</span>
+    </h1>
+    <p class="hero-desc">
+      Single-file web apps for freelancers and small businesses.
+      Download once — runs in any browser, offline, forever.
+      No subscriptions. No accounts. No cloud.
+    </p>
+    <div class="hero-actions">
+      <a href="#tools" class="btn-primary">Browse tools →</a>
+      <a href="#how" class="btn-secondary">// how it works</a>
+    </div>
+  </div>
+  <div class="hero-stats">
+    <div>
+      <div class="hero-stat-num">2</div>
+      <div class="hero-stat-label">Tools live</div>
+    </div>
+    <div>
+      <div class="hero-stat-num">$0</div>
+      <div class="hero-stat-label">Monthly fees</div>
+    </div>
+    <div>
+      <div class="hero-stat-num">∞</div>
+      <div class="hero-stat-label">License</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── MARQUEE ── -->
+<div class="marquee-wrap">
+  <div class="marquee-track">
+    <div class="marquee-item">DataForge <span class="marquee-dot"></span></div>
+    <div class="marquee-item">ResumeForge <span class="marquee-dot"></span></div>
+    <div class="marquee-item">No install required <span class="marquee-dot"></span></div>
+    <div class="marquee-item">Works offline <span class="marquee-dot"></span></div>
+    <div class="marquee-item">PDF export <span class="marquee-dot"></span></div>
+    <div class="marquee-item">Zero subscriptions <span class="marquee-dot"></span></div>
+    <div class="marquee-item">One-time purchase <span class="marquee-dot"></span></div>
+    <div class="marquee-item">Your data stays local <span class="marquee-dot"></span></div>
+    <!-- duplicate for seamless loop -->
+    <div class="marquee-item">DataForge <span class="marquee-dot"></span></div>
+    <div class="marquee-item">ResumeForge <span class="marquee-dot"></span></div>
+    <div class="marquee-item">No install required <span class="marquee-dot"></span></div>
+    <div class="marquee-item">Works offline <span class="marquee-dot"></span></div>
+    <div class="marquee-item">PDF export <span class="marquee-dot"></span></div>
+    <div class="marquee-item">Zero subscriptions <span class="marquee-dot"></span></div>
+    <div class="marquee-item">One-time purchase <span class="marquee-dot"></span></div>
+    <div class="marquee-item">Your data stays local <span class="marquee-dot"></span></div>
+  </div>
+</div>
+
+<!-- ── PRODUCTS ── -->
+<section id="tools" class="products-section">
+  <div class="products-header">
+    <div>
+      <div class="section-label">Tools</div>
+      <h2 class="section-title">The catalogue</h2>
+    </div>
+    <p class="section-sub">Each tool is a single HTML file. Open it in Chrome, Firefox, Edge or Safari — it just works.</p>
+  </div>
+  <div class="products-grid reveal">
+
+    <a class="product-card featured" href="https://gumroad.com" target="_blank">
+      <div class="product-badge">New</div>
+      <div class="product-num">01</div>
+      <div class="product-icon">📊</div>
+      <div class="product-name">DataForge</div>
+      <div class="product-desc">Drag-and-drop data analytics. Upload CSV, Excel or JSON — build pivot charts, apply filters, and export polished PDF reports. The simple alternative to Power BI.</div>
+      <div class="product-tags">
+        <span class="product-tag">CSV</span>
+        <span class="product-tag">Excel</span>
+        <span class="product-tag">Charts</span>
+        <span class="product-tag">PDF export</span>
+        <span class="product-tag">Offline</span>
+      </div>
+      <div class="product-footer">
+        <div class="product-price">$19</div>
+        <div class="product-cta">Get it →</div>
+      </div>
+    </a>
+
+    <a class="product-card featured" href="https://gumroad.com" target="_blank">
+      <div class="product-badge">New</div>
+      <div class="product-num">02</div>
+      <div class="product-icon">📄</div>
+      <div class="product-name">ResumeForge</div>
+      <div class="product-desc">AI-powered resume builder with live A4 preview. Fill in your details, let AI write your summary and bullet points, and export a professional PDF in minutes.</div>
+      <div class="product-tags">
+        <span class="product-tag">AI writing</span>
+        <span class="product-tag">Live preview</span>
+        <span class="product-tag">PDF export</span>
+        <span class="product-tag">Offline</span>
+      </div>
+      <div class="product-footer">
+        <div class="product-price">$19</div>
+        <div class="product-cta">Get it →</div>
+      </div>
+    </a>
+
+    <div class="product-card soon">
+      <div class="product-num">03</div>
+      <div class="product-icon">🧾</div>
+      <div class="product-name">InvoiceForge</div>
+      <div class="product-desc">Professional invoice generator. Add your logo, client details, line items — get a PDF invoice ready to send. Built for freelancers.</div>
+      <div class="product-tags">
+        <span class="product-tag">Invoices</span>
+        <span class="product-tag">PDF</span>
+        <span class="product-tag">Freelancers</span>
+      </div>
+      <div class="product-footer">
+        <div class="product-price">Coming soon</div>
+      </div>
+    </div>
+
+    <div class="product-card soon">
+      <div class="product-num">04</div>
+      <div class="product-icon">📋</div>
+      <div class="product-name">ProposalForge</div>
+      <div class="product-desc">Client proposal builder. Scope, timeline, pricing — export a beautiful PDF proposal that wins projects.</div>
+      <div class="product-tags">
+        <span class="product-tag">Proposals</span>
+        <span class="product-tag">PDF</span>
+        <span class="product-tag">Consultants</span>
+      </div>
+      <div class="product-footer">
+        <div class="product-price">Coming soon</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── HOW IT WORKS ── -->
+<section id="how" class="how-section">
+  <div class="section-label">Process</div>
+  <h2 class="section-title">How it works</h2>
+  <p class="section-sub">No setup. No learning curve. Just open and use.</p>
+  <div class="steps reveal">
+    <div class="step">
+      <div class="step-num">01</div>
+      <div class="step-title">Buy once</div>
+      <div class="step-desc">One-time payment on Gumroad. No subscription, no hidden fees. You own it permanently.</div>
+    </div>
+    <div class="step">
+      <div class="step-num">02</div>
+      <div class="step-title">Download the file</div>
+      <div class="step-desc">You get a single <code style="font-family:var(--font-mono);font-size:12px;color:var(--accent)">.html</code> file. Save it anywhere — your desktop, a USB drive, Dropbox.</div>
+    </div>
+    <div class="step">
+      <div class="step-num">03</div>
+      <div class="step-title">Open in browser</div>
+      <div class="step-desc">Double-click to open in Chrome, Firefox, Safari or Edge. No install. Works 100% offline.</div>
+    </div>
+    <div class="step">
+      <div class="step-num">04</div>
+      <div class="step-title">Get work done</div>
+      <div class="step-desc">Use it as many times as you want, forever. Your data never leaves your device.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── WHY ── -->
+<section class="why-section">
+  <div class="section-label">Why Forgekit</div>
+  <h2 class="section-title">No fluff. Just tools.</h2>
+  <div class="why-grid reveal">
+    <div class="why-card">
+      <div class="why-icon">⚡</div>
+      <div class="why-title">Zero setup</div>
+      <div class="why-desc">No npm install, no Docker, no server. Open the file — it works. <span class="why-highlight">Instantly.</span></div>
+    </div>
+    <div class="why-card">
+      <div class="why-icon">🔒</div>
+      <div class="why-title">Your data stays yours</div>
+      <div class="why-desc">Everything runs in your browser. <span class="why-highlight">No data is ever uploaded</span> to any server. Your spreadsheets, resumes, and invoices are private.</div>
+    </div>
+    <div class="why-card">
+      <div class="why-icon">♾️</div>
+      <div class="why-title">Yours forever</div>
+      <div class="why-desc">Pay once. No subscription cancellations, no price hikes, no "we're shutting down" emails. <span class="why-highlight">Own it permanently.</span></div>
+    </div>
+    <div class="why-card">
+      <div class="why-icon">📱</div>
+      <div class="why-title">Works everywhere</div>
+      <div class="why-desc">Windows, Mac, Linux. Chrome, Firefox, Safari, Edge. Online or offline. <span class="why-highlight">If it has a browser, it works.</span></div>
+    </div>
+    <div class="why-card">
+      <div class="why-icon">🎯</div>
+      <div class="why-title">Focused and simple</div>
+      <div class="why-desc">Each tool does one thing well. No bloat, no settings you'll never use. <span class="why-highlight">Just the right amount of power.</span></div>
+    </div>
+    <div class="why-card">
+      <div class="why-icon">🛠</div>
+      <div class="why-title">Built by a maker</div>
+      <div class="why-desc">Made by one person who uses these tools themselves. Fast updates, real support, and a <span class="why-highlight">genuine commitment to quality.</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ── BUNDLE ── -->
+<div class="bundle-section" id="bundle">
+  <div class="bundle-inner">
+    <div>
+      <div class="section-label">Bundle deal</div>
+      <h2 class="section-title">The Freelancer Toolkit</h2>
+      <p class="section-sub" style="margin-bottom:0">Get every Forgekit tool — now and future — at one low price. Built for the freelancer who needs everything in one place.</p>
+    </div>
+    <div class="bundle-card reveal">
+      <span class="bundle-tag">Best value</span>
+      <div class="bundle-name">All-Tools Bundle</div>
+      <div class="bundle-desc">Every tool we build, yours to keep — including all future tools we release.</div>
+      <div class="bundle-items">
+        <div class="bundle-item"><div class="bundle-check">✓</div>DataForge — data analytics</div>
+        <div class="bundle-item"><div class="bundle-check">✓</div>ResumeForge — AI resume builder</div>
+        <div class="bundle-item"><div class="bundle-check">✓</div>InvoiceForge — coming soon</div>
+        <div class="bundle-item"><div class="bundle-check">✓</div>ProposalForge — coming soon</div>
+        <div class="bundle-item"><div class="bundle-check">✓</div>All future tools, free</div>
+      </div>
+      <div class="bundle-pricing">
+        <div class="bundle-price">$49</div>
+        <div class="bundle-was">$76</div>
+        <div class="bundle-save">Save 35%</div>
+      </div>
+      <a href="https://gumroad.com" target="_blank" class="btn-primary" style="width:100%; justify-content:center;">Get the bundle →</a>
+    </div>
+  </div>
+</div>
+
+<!-- ── TESTIMONIALS ── -->
+<section class="testi-section">
+  <div class="section-label">Reviews</div>
+  <h2 class="section-title">What people say</h2>
+  <div class="testi-grid reveal">
+    <div class="testi-card">
+      <div class="testi-stars">★★★★★</div>
+      <div class="testi-text">"DataForge replaced a $30/month Power BI subscription for my small consultancy. My clients love the reports and I love that it just works without any setup."</div>
+      <div class="testi-author">
+        <div class="testi-avatar">MR</div>
+        <div>
+          <div class="testi-name">Mark R.</div>
+          <div class="testi-role">Independent consultant</div>
+        </div>
+      </div>
+    </div>
+    <div class="testi-card">
+      <div class="testi-stars">★★★★★</div>
+      <div class="testi-text">"I updated my resume in 20 minutes with ResumeForge. The AI wrote a better summary than I ever could. Got an interview the next day."</div>
+      <div class="testi-author">
+        <div class="testi-avatar">SP</div>
+        <div>
+          <div class="testi-name">Sofia P.</div>
+          <div class="testi-role">UX Designer</div>
+        </div>
+      </div>
+    </div>
+    <div class="testi-card">
+      <div class="testi-stars">★★★★★</div>
+      <div class="testi-text">"The no-subscription model is exactly what I needed. I'm tired of paying monthly for tools I use once a quarter. This is the future of software."</div>
+      <div class="testi-author">
+        <div class="testi-avatar">AK</div>
+        <div>
+          <div class="testi-name">Alex K.</div>
+          <div class="testi-role">Freelance developer</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FAQ ── -->
+<section id="faq" class="faq-section">
+  <div class="section-label">FAQ</div>
+  <h2 class="section-title">Questions</h2>
+  <div class="faq-grid reveal">
+    <div class="faq-item">
+      <div class="faq-q">What exactly do I get when I buy?</div>
+      <div class="faq-a">A single .html file you download from Gumroad. Open it in any browser and it works immediately — offline, forever. No installation, no account, no activation key.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Does it work on Mac, Windows, and Linux?</div>
+      <div class="faq-a">Yes. Any operating system with a modern browser (Chrome, Firefox, Safari, Edge) works. It's been tested on all three.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Is my data safe? Where does it go?</div>
+      <div class="faq-a">Your data never leaves your device. Everything runs locally in your browser. No server, no upload, no cloud storage of any kind.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Can I use it commercially? For clients?</div>
+      <div class="faq-a">Yes. You can use any Forgekit tool for personal and commercial work — client reports, business documents, anything. One licence per person.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">What if I need help or find a bug?</div>
+      <div class="faq-a">Email support is included. Message through Gumroad and you'll get a response within 24 hours. Bug fixes are delivered as updated file downloads.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Do you offer refunds?</div>
+      <div class="faq-a">Yes — 7-day no-questions-asked refund via Gumroad if the tool doesn't work for your use case.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CTA ── -->
+<section class="cta-section">
+  <div class="cta-bg"></div>
+  <div class="cta-inner reveal">
+    <h2 class="cta-title">Start with one tool.</h2>
+    <p class="cta-sub">No subscription. No commitment. Just a tool that works — downloaded in 30 seconds, useful forever.</p>
+    <div class="cta-actions">
+      <a href="#tools" class="btn-primary">Browse all tools →</a>
+      <a href="https://gumroad.com" target="_blank" class="btn-secondary">// View on Gumroad</a>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="footer-brand">
+    <div class="nav-logo-mark" style="width:22px;height:22px;font-size:11px">F</div>
+    Forgekit
+  </div>
+  <div class="footer-copy">© 2025 Forgekit · Made in Sri Lanka 🇱🇰</div>
+  <div class="footer-links">
+    <a href="https://gumroad.com" target="_blank">Gumroad</a>
+    <a href="mailto:hello@forgekit.com">Contact</a>
+    <a href="#tools">Tools</a>
+  </div>
+</footer>
+
+<script>
+// ── CURSOR ──
+const dot  = document.getElementById('cursor-dot');
+const ring = document.getElementById('cursor-ring');
+let mx=0, my=0, rx=0, ry=0;
+document.addEventListener('mousemove', e => { mx=e.clientX; my=e.clientY; dot.style.left=mx+'px'; dot.style.top=my+'px'; });
+(function animRing() {
+  rx += (mx-rx)*0.12; ry += (my-ry)*0.12;
+  ring.style.left = rx+'px'; ring.style.top = ry+'px';
+  requestAnimationFrame(animRing);
+})();
+document.querySelectorAll('a,.product-card,.btn-primary,.btn-secondary,.nav-cta').forEach(el => {
+  el.addEventListener('mouseenter', () => { ring.style.transform='translate(-50%,-50%) scale(1.6)'; ring.style.borderColor='rgba(232,255,71,0.7)'; });
+  el.addEventListener('mouseleave', () => { ring.style.transform='translate(-50%,-50%) scale(1)'; ring.style.borderColor='rgba(232,255,71,0.4)'; });
+});
+
+// ── SCROLL REVEAL ──
+const observer = new IntersectionObserver(entries => {
+  entries.forEach((e, i) => {
+    if (e.isIntersecting) {
+      setTimeout(() => e.target.classList.add('visible'), i * 60);
+      observer.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// ── ACTIVE NAV ──
+const sections = document.querySelectorAll('section[id], .bundle-section[id]');
+const navLinks = document.querySelectorAll('.nav-links a');
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(s => { if (window.scrollY >= s.offsetTop - 100) current = s.id; });
+  navLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#'+current));
+}, { passive: true });
+</script>
+</body>
+</html>
+Done
